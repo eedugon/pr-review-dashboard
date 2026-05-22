@@ -500,6 +500,148 @@
     color: var(--text-muted);
   }
 
+  .filter-tabs-secondary .filter-tab {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+
+  /* ── Team view ────────────────────────────────────── */
+  .team-selector-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .team-selector-label select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .team-member-section {
+    margin-bottom: 12px;
+    border: 1px solid var(--border-muted);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .team-member-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface-hover);
+    border-bottom: 1px solid var(--border-muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .team-member-header .member-login { color: var(--text); }
+  .team-member-header .member-login.is-me { color: var(--accent); }
+  .team-member-header .member-count {
+    margin-left: auto;
+    color: var(--text-dim);
+    font-weight: 400;
+    font-size: 12px;
+  }
+
+  .team-member-header.idle {
+    background: transparent;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .co-claim-badges {
+    display: inline-flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .co-claim-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    padding: 2px 8px 2px 3px;
+    background: var(--badge-muted-bg);
+    border: 1px solid var(--border-muted);
+    border-radius: 12px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .co-claim-badge.is-me {
+    background: var(--badge-accent-bg);
+    color: var(--accent);
+    border-color: rgba(0,191,179,0.4);
+  }
+
+  .co-claim-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface-2);
+  }
+
+  .member-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface-2);
+  }
+
+  .team-member-empty {
+    padding: 8px 14px;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .team-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 18px 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .team-section-title:hover { color: var(--text); }
+  .team-section-title .collapse-arrow,
+  .team-member-header .collapse-arrow {
+    color: var(--text-dim);
+    transition: transform 0.15s;
+    display: inline-flex;
+  }
+  .team-section-title .collapse-arrow.collapsed,
+  .team-member-header .collapse-arrow.collapsed {
+    transform: rotate(-90deg);
+  }
+
+  .team-member-header {
+    cursor: pointer;
+    user-select: none;
+  }
+  .team-member-header:hover { background: var(--surface-2); }
+  .team-member-header.idle { cursor: default; }
+  .team-member-header.idle:hover { background: transparent; }
+
   .auto-refresh-toggle {
     font-size: 12px;
     color: var(--text-dim);
@@ -996,6 +1138,82 @@
     white-space: nowrap;
   }
 
+  /* ── Claim chips (👀 + assignee coordination) ────────── */
+  .pr-claims {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    align-items: center;
+  }
+
+  .pr-claims-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-right: 2px;
+  }
+
+  .claim-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    border: 1px dashed var(--border-muted);
+    background: transparent;
+    color: var(--text-muted);
+  }
+
+  .claim-chip.claim-assigned {
+    border-style: solid;
+    background: var(--badge-muted-bg);
+    color: var(--text);
+  }
+
+  .claim-chip.claim-me {
+    border-color: rgba(0,191,179,0.4);
+    background: var(--badge-accent-bg);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .claim-chip .claim-icons {
+    display: inline-flex;
+    gap: 2px;
+    line-height: 1;
+  }
+
+  .claim-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border-muted);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .claim-btn:hover { background: var(--surface-hover); color: var(--text); }
+  .claim-btn:disabled { opacity: 0.5; cursor: wait; }
+
+  .claim-btn.claimed {
+    border-color: rgba(0,191,179,0.4);
+    background: var(--badge-accent-bg);
+    color: var(--accent);
+  }
+
+  .claim-btn-secondary {
+    margin-left: 2px;
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
   /* ── CI status ─────────────────────────────────────── */
   .pr-ci-badge {
     display: inline-flex;
@@ -1269,6 +1487,10 @@
         My PRs
         <span class="view-tab-count" id="vcount-my-prs">0</span>
       </button>
+      <button class="view-tab" id="view-tab-team" onclick="switchView('team')">
+        Team
+        <span class="view-tab-count" id="vcount-team">0</span>
+      </button>
       <div class="view-tab-meta">
         <label class="auto-refresh-toggle">
           <input type="checkbox" id="show-drafts" checked onchange="onShowDraftsChange()">
@@ -1289,6 +1511,11 @@
           <button class="filter-tab" data-filter="COMMENTED">Commented <span class="count" id="count-commented">0</span></button>
           <button class="filter-tab" data-filter="CHANGES_REQUESTED">Changes requested <span class="count" id="count-changes">0</span></button>
         </div>
+        <div class="filter-tabs filter-tabs-secondary" id="claim-filter-tabs">
+          <button class="filter-tab active" data-claim-filter="all">All claims</button>
+          <button class="filter-tab" data-claim-filter="unclaimed">Unclaimed <span class="count" id="count-unclaimed">0</span></button>
+          <button class="filter-tab" data-claim-filter="claimed">Claimed <span class="count" id="count-claimed">0</span></button>
+        </div>
       </div>
 
       <div id="pr-container">
@@ -1298,6 +1525,18 @@
 
     <div id="my-prs-view" style="display:none;">
       <div id="my-pr-container"></div>
+    </div>
+
+    <div id="team-view" style="display:none;">
+      <div class="toolbar">
+        <div id="team-selector-container"></div>
+      </div>
+      <div id="team-container">
+        <div class="blankslate">
+          <h3>Pick a team</h3>
+          <p>Select one of your teams above to see who is reviewing what.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1321,14 +1560,16 @@
 </footer>
 
 <script>
-const STORAGE_KEYS = { token: 'prd_token', user: 'prd_user', teams: 'prd_teams', theme: 'prd_theme', dismissed: 'prd_dismissed', collapsedRepos: 'prd_collapsed_repos', collapsedMyRepos: 'prd_collapsed_my_repos', mutedTeams: 'prd_muted_teams', botLogins: 'prd_bot_logins', showDrafts: 'prd_show_drafts', view: 'prd_view', teamsBarCollapsed: 'prd_teams_bar_collapsed', excludedTeams: 'prd_excluded_teams' };
+const STORAGE_KEYS = { token: 'prd_token', user: 'prd_user', viewerId: 'prd_viewer_id', teams: 'prd_teams', theme: 'prd_theme', dismissed: 'prd_dismissed', collapsedRepos: 'prd_collapsed_repos', collapsedMyRepos: 'prd_collapsed_my_repos', mutedTeams: 'prd_muted_teams', botLogins: 'prd_bot_logins', showDrafts: 'prd_show_drafts', view: 'prd_view', teamsBarCollapsed: 'prd_teams_bar_collapsed', excludedTeams: 'prd_excluded_teams', selectedTeam: 'prd_selected_team', claimFilter: 'prd_claim_filter', teamCollapsed: 'prd_team_collapsed' };
 const DEFAULT_BOT_LOGINS = ['elasticmachine', 'macroscopeapp'];
 let allPRs = [];
 let currentFilter = 'all';
+let currentClaimFilter = 'all'; // 'all' | 'unclaimed' | 'claimed'
 let currentRequestedViaFilter = null; // null = all, 'direct' = only direct, 'org/team-slug' = specific team
 let dismissedShowExpanded = false;
 let myOwnPRs = [];
 let currentView = 'review';
+let teamMembersCache = new Map(); // qualified team -> [{ login, avatarUrl }]
 
 /* ── Octicons (GitHub's Primer SVG paths) ─────────────── */
 const OCTICONS = {
@@ -1609,6 +1850,15 @@ async function loadUserProfile() {
   } catch (e) {
     // Non-fatal
   }
+  // Cache viewer's GraphQL node id once — assignee mutations need it.
+  if (!localStorage.getItem(STORAGE_KEYS.viewerId)) {
+    try {
+      const data = await graphql(`query { viewer { id } }`);
+      if (data?.viewer?.id) localStorage.setItem(STORAGE_KEYS.viewerId, data.viewer.id);
+    } catch (e) {
+      // Non-fatal: claim-via-assignee will fall back to fetching it on demand
+    }
+  }
 }
 
 /* ── Hero greeting ─────────────────────────────────────── */
@@ -1643,11 +1893,35 @@ function setupFilterTabs() {
   document.getElementById('filter-tabs').addEventListener('click', (e) => {
     const tab = e.target.closest('.filter-tab');
     if (!tab) return;
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     currentFilter = tab.dataset.filter;
     renderPRs();
   });
+  const claimTabs = document.getElementById('claim-filter-tabs');
+  if (claimTabs) {
+    const savedClaim = localStorage.getItem(STORAGE_KEYS.claimFilter);
+    if (savedClaim) {
+      currentClaimFilter = savedClaim;
+      claimTabs.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.claimFilter === savedClaim));
+    }
+    claimTabs.addEventListener('click', (e) => {
+      const tab = e.target.closest('.filter-tab');
+      if (!tab) return;
+      claimTabs.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentClaimFilter = tab.dataset.claimFilter;
+      localStorage.setItem(STORAGE_KEYS.claimFilter, currentClaimFilter);
+      renderPRs();
+    });
+  }
+}
+
+function applyClaimFilter(prs) {
+  if (currentClaimFilter === 'all') return prs;
+  if (currentClaimFilter === 'unclaimed') return prs.filter(pr => (pr.claims || []).length === 0);
+  if (currentClaimFilter === 'claimed') return prs.filter(pr => (pr.claims || []).length > 0);
+  return prs;
 }
 
 function setupDraftToggle() {
@@ -1884,6 +2158,7 @@ async function searchPRs(searchQuery) {
           pageInfo { hasNextPage endCursor }
           nodes {
             ... on PullRequest {
+              id
               number
               title
               url
@@ -1894,6 +2169,12 @@ async function searchPRs(searchQuery) {
               repository {
                 nameWithOwner
                 isArchived
+              }
+              assignees(first: 10) {
+                nodes { login }
+              }
+              reactions(content: EYES, first: 50) {
+                nodes { user { login } }
               }
               labels(first: 10) {
                 nodes { name color }
@@ -1962,6 +2243,7 @@ async function searchMyPRs(searchQuery) {
           pageInfo { hasNextPage endCursor }
           nodes {
             ... on PullRequest {
+              id
               number
               title
               url
@@ -1973,6 +2255,12 @@ async function searchMyPRs(searchQuery) {
               repository {
                 nameWithOwner
                 isArchived
+              }
+              assignees(first: 10) {
+                nodes { login }
+              }
+              reactions(content: EYES, first: 50) {
+                nodes { user { login } }
               }
               labels(first: 10) {
                 nodes { name color }
@@ -2168,6 +2456,148 @@ function removeBotLogin(login) {
 // Returns true only for real human GitHub accounts.
 // Excludes: Bot/Org/Mannequin types, [bot]-suffixed logins (GitHub Apps),
 // and the user-configured list of service accounts (e.g. elasticmachine).
+function findPRById(prId) {
+  return allPRs.find(p => p.id === prId) || myOwnPRs.find(p => p.id === prId) || null;
+}
+
+async function ensureViewerId() {
+  let id = localStorage.getItem(STORAGE_KEYS.viewerId);
+  if (id) return id;
+  const data = await graphql(`query { viewer { id } }`);
+  id = data?.viewer?.id;
+  if (id) localStorage.setItem(STORAGE_KEYS.viewerId, id);
+  return id;
+}
+
+function updateLocalClaim(pr, login, patch) {
+  if (!pr) return;
+  pr.claims = pr.claims || [];
+  let claim = pr.claims.find(c => c.login === login);
+  if (!claim) {
+    claim = { login, viaAssignee: false, viaReaction: false };
+    pr.claims.push(claim);
+  }
+  Object.assign(claim, patch);
+  // Drop the claim entirely if both signals are off
+  if (!claim.viaAssignee && !claim.viaReaction) {
+    pr.claims = pr.claims.filter(c => c.login !== login);
+  }
+}
+
+async function toggleClaim(btn, prId) {
+  const pr = findPRById(prId);
+  if (!pr) return;
+  const username = localStorage.getItem(STORAGE_KEYS.user);
+  const myClaim = (pr.claims || []).find(c => c.login === username);
+  const wantOn = !(myClaim?.viaReaction);
+  btn.disabled = true;
+  try {
+    if (wantOn) {
+      await graphql(
+        `mutation($id: ID!) { addReaction(input: { subjectId: $id, content: EYES }) { reaction { id } } }`,
+        { id: prId }
+      );
+      updateLocalClaim(pr, username, { viaReaction: true });
+    } else {
+      await graphql(
+        `mutation($id: ID!) { removeReaction(input: { subjectId: $id, content: EYES }) { reaction { id } } }`,
+        { id: prId }
+      );
+      updateLocalClaim(pr, username, { viaReaction: false });
+      // If they had the assignee signal too, also remove it (Release = full release).
+      if (myClaim?.viaAssignee) {
+        try {
+          const userId = await ensureViewerId();
+          if (userId) {
+            await graphql(
+              `mutation($id: ID!, $u: ID!) { removeAssigneesFromAssignable(input: { assignableId: $id, assigneeIds: [$u] }) { clientMutationId } }`,
+              { id: prId, u: userId }
+            );
+            updateLocalClaim(pr, username, { viaAssignee: false });
+          }
+        } catch (e) {
+          console.warn('Failed to remove assignee on release:', e.message);
+        }
+      }
+    }
+    rerenderForCurrentView();
+  } catch (e) {
+    console.error('Claim toggle failed:', e);
+    alert(`Could not ${wantOn ? 'claim' : 'release'} this PR: ${e.message}`);
+    btn.disabled = false;
+  }
+}
+
+async function promoteClaim(btn, prId) {
+  const pr = findPRById(prId);
+  if (!pr) return;
+  const username = localStorage.getItem(STORAGE_KEYS.user);
+  btn.disabled = true;
+  try {
+    const userId = await ensureViewerId();
+    if (!userId) throw new Error('Could not resolve your user id');
+    await graphql(
+      `mutation($id: ID!, $u: ID!) { addAssigneesToAssignable(input: { assignableId: $id, assigneeIds: [$u] }) { clientMutationId } }`,
+      { id: prId, u: userId }
+    );
+    updateLocalClaim(pr, username, { viaAssignee: true });
+    rerenderForCurrentView();
+  } catch (e) {
+    console.error('Assign-me failed:', e);
+    alert(`Could not assign you to this PR: ${e.message}`);
+    btn.disabled = false;
+  }
+}
+
+async function demoteClaim(btn, prId) {
+  const pr = findPRById(prId);
+  if (!pr) return;
+  const username = localStorage.getItem(STORAGE_KEYS.user);
+  btn.disabled = true;
+  try {
+    const userId = await ensureViewerId();
+    if (!userId) throw new Error('Could not resolve your user id');
+    await graphql(
+      `mutation($id: ID!, $u: ID!) { removeAssigneesFromAssignable(input: { assignableId: $id, assigneeIds: [$u] }) { clientMutationId } }`,
+      { id: prId, u: userId }
+    );
+    updateLocalClaim(pr, username, { viaAssignee: false });
+    rerenderForCurrentView();
+  } catch (e) {
+    console.error('Unassign-me failed:', e);
+    alert(`Could not unassign you from this PR: ${e.message}`);
+    btn.disabled = false;
+  }
+}
+
+function rerenderForCurrentView() {
+  updateCounts();
+  renderPRs();
+  renderMyPRs();
+  if (currentView === 'team') renderTeamView();
+}
+
+// Build unified list of claimers: anyone assigned to the PR or who reacted with 👀.
+// The PR author is excluded — they're implicitly working on it, not reviewing.
+// Returns [{ login, viaAssignee: bool, viaReaction: bool }] deduped by login.
+function deriveClaims(pr) {
+  const authorLogin = pr.author?.login;
+  const map = new Map();
+  for (const a of (pr.assignees?.nodes || [])) {
+    const login = a?.login;
+    if (!login || login === authorLogin) continue;
+    if (!map.has(login)) map.set(login, { login, viaAssignee: false, viaReaction: false });
+    map.get(login).viaAssignee = true;
+  }
+  for (const r of (pr.reactions?.nodes || [])) {
+    const login = r?.user?.login;
+    if (!login || login === authorLogin) continue;
+    if (!map.has(login)) map.set(login, { login, viaAssignee: false, viaReaction: false });
+    map.get(login).viaReaction = true;
+  }
+  return Array.from(map.values());
+}
+
 function isHumanActor(author) {
   if (!author) return false;
   if (author.__typename && author.__typename !== 'User') return false;
@@ -2327,6 +2757,7 @@ async function fetchMyPRs() {
       lastActivityLogin,
       lastActivityAt,
       otherReviewers,
+      claims: deriveClaims(pr),
     };
   }).filter(pr => !pr.repository?.isArchived);
 
@@ -2545,6 +2976,7 @@ async function fetchPRs() {
         requestedVia,
         otherReviewers,
         ciState,
+        claims: deriveClaims(pr),
         repo: pr.repository?.nameWithOwner || 'unknown'
       };
     }).filter(pr => pr.myState !== 'APPROVED' && pr.author?.login !== username && !pr.repository?.isArchived);
@@ -2554,6 +2986,7 @@ async function fetchPRs() {
     updateCounts();
     renderPRs();
     renderMyPRs();
+    if (currentView === 'team') renderTeamView();
     document.getElementById('status-text').textContent = `Updated ${new Date().toLocaleTimeString()}`;
     renderHero({
       totalReviews: getViaFilteredPRs().active.length,
@@ -2591,14 +3024,19 @@ function getViaFilteredPRs() {
 
 function updateCounts() {
   const { active } = getViaFilteredPRs();
-  const counts = { all: active.length, NONE: 0, COMMENTED: 0, CHANGES_REQUESTED: 0 };
+  const counts = { all: active.length, NONE: 0, COMMENTED: 0, CHANGES_REQUESTED: 0, unclaimed: 0, claimed: 0 };
   active.forEach(pr => {
     if (counts[pr.myState] !== undefined) counts[pr.myState]++;
+    if ((pr.claims || []).length === 0) counts.unclaimed++; else counts.claimed++;
   });
   document.getElementById('count-all').textContent = counts.all;
   document.getElementById('count-pending').textContent = counts.NONE;
   document.getElementById('count-commented').textContent = counts.COMMENTED;
   document.getElementById('count-changes').textContent = counts.CHANGES_REQUESTED;
+  const cu = document.getElementById('count-unclaimed');
+  const cc = document.getElementById('count-claimed');
+  if (cu) cu.textContent = counts.unclaimed;
+  if (cc) cc.textContent = counts.claimed;
   const vcountReview = document.getElementById('vcount-review');
   if (vcountReview) vcountReview.textContent = counts.all;
 }
@@ -2632,12 +3070,14 @@ function renderGroupedList(prs, isDismissedList) {
 function renderPRs() {
   const container = document.getElementById('pr-container');
   const { active, dismissed } = getViaFilteredPRs();
-  const filtered = currentFilter === 'all'
+  const byState = currentFilter === 'all'
     ? active
     : active.filter(pr => pr.myState === currentFilter);
-  const filteredDismissed = currentFilter === 'all'
+  const byStateDismissed = currentFilter === 'all'
     ? dismissed
     : dismissed.filter(pr => pr.myState === currentFilter);
+  const filtered = applyClaimFilter(byState);
+  const filteredDismissed = applyClaimFilter(byStateDismissed);
 
   let html = '';
 
@@ -2726,6 +3166,7 @@ function renderPRCard(pr, isDismissedCard = false) {
           ${renderCiInline(pr.ciState)}
         </div>
         ${reviewerBadges ? `<div class="pr-reviewers"><span class="pr-reviewers-label">Reviews:</span>${reviewerBadges}</div>` : ''}
+        ${renderClaimRow(pr, localStorage.getItem(STORAGE_KEYS.user))}
         ${labels ? `<div class="pr-labels">${labels}</div>` : ''}
       </div>
       <div class="pr-right">
@@ -2736,6 +3177,336 @@ function renderPRCard(pr, isDismissedCard = false) {
 }
 
 /* ── Shared chip renderers ─────────────────────────────── */
+// Persisted set of collapsed Team-view section/member keys.
+// Section keys: 'section:reviewing' | 'section:co-claimed' | 'section:unclaimed' | 'section:external' | 'section:idle'
+// Sub keys:     'member:<login>' | 'external:<login>'
+// Default-collapsed (when the key has never been touched): 'section:idle'.
+const TEAM_DEFAULT_COLLAPSED = new Set(['section:idle']);
+
+function getTeamCollapsedRaw() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.teamCollapsed);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function isTeamCollapsed(key) {
+  const state = getTeamCollapsedRaw();
+  if (Object.prototype.hasOwnProperty.call(state, key)) return state[key] === true;
+  return TEAM_DEFAULT_COLLAPSED.has(key);
+}
+
+function toggleTeamCollapse(key) {
+  const state = getTeamCollapsedRaw();
+  const current = isTeamCollapsed(key);
+  state[key] = !current;
+  localStorage.setItem(STORAGE_KEYS.teamCollapsed, JSON.stringify(state));
+  renderTeamView();
+}
+
+async function fetchTeamMembers(qualified) {
+  if (teamMembersCache.has(qualified)) return teamMembersCache.get(qualified);
+  const team = userTeams.find(t => t.qualified === qualified);
+  if (!team) return [];
+  try {
+    const data = await graphql(
+      `query($org: String!, $slug: String!) {
+        organization(login: $org) {
+          team(slug: $slug) {
+            members(first: 100) {
+              nodes { login avatarUrl }
+            }
+          }
+        }
+      }`,
+      { org: team.org, slug: team.slug }
+    );
+    const nodes = data?.organization?.team?.members?.nodes || [];
+    const members = nodes.map(m => ({ login: m.login, avatarUrl: m.avatarUrl }));
+    teamMembersCache.set(qualified, members);
+    return members;
+  } catch (e) {
+    console.warn(`Failed to fetch members for ${qualified}:`, e.message);
+    return [];
+  }
+}
+
+function renderTeamSelector() {
+  const container = document.getElementById('team-selector-container');
+  if (!container) return;
+  const excluded = getExcludedTeams();
+  const selectable = userTeams.filter(t => !excluded.includes(t.qualified));
+  if (selectable.length === 0) {
+    if (userTeams.length === 0) {
+      container.innerHTML = `<span style="color:var(--text-dim); font-size:13px;">No teams detected. Add <code>read:org</code> scope and refresh.</span>`;
+    } else {
+      container.innerHTML = `<span style="color:var(--text-dim); font-size:13px;">All your teams are excluded in settings.</span>`;
+    }
+    return;
+  }
+  let selected = localStorage.getItem(STORAGE_KEYS.selectedTeam);
+  if (!selected || !selectable.some(t => t.qualified === selected)) {
+    selected = selectable[0].qualified;
+    localStorage.setItem(STORAGE_KEYS.selectedTeam, selected);
+  }
+  const options = selectable.map(t =>
+    `<option value="${escapeHtml(t.qualified)}"${t.qualified === selected ? ' selected' : ''}>${escapeHtml(t.qualified)}</option>`
+  ).join('');
+  container.innerHTML = `
+    <label class="team-selector-label">
+      <span>Team:</span>
+      <select id="team-selector" onchange="onTeamSelectorChange(this.value)">${options}</select>
+    </label>`;
+}
+
+function getActiveTeamQualified() {
+  const excluded = getExcludedTeams();
+  const selectable = userTeams.filter(t => !excluded.includes(t.qualified));
+  if (selectable.length === 0) return null;
+  const saved = localStorage.getItem(STORAGE_KEYS.selectedTeam);
+  if (saved && selectable.some(t => t.qualified === saved)) return saved;
+  return selectable[0].qualified;
+}
+
+async function renderTeamView() {
+  renderTeamSelector();
+  const container = document.getElementById('team-container');
+  const vcount = document.getElementById('vcount-team');
+  const qualified = getActiveTeamQualified();
+  if (!qualified) {
+    container.innerHTML = `<div class="blankslate"><h3>No team selected</h3><p>You don't belong to any trackable team yet.</p></div>`;
+    if (vcount) vcount.textContent = 0;
+    return;
+  }
+
+  container.innerHTML = `<div class="loading"><div class="spinner"></div><br>Loading team view…</div>`;
+  const members = await fetchTeamMembers(qualified);
+
+  const showDrafts = document.getElementById('show-drafts')?.checked ?? true;
+  const teamPRs = allPRs.filter(pr => {
+    if (!showDrafts && pr.isDraft) return false;
+    if (isDismissed(pr)) return false;
+    return (pr.matchedTeams || []).includes(qualified);
+  });
+
+  const memberLogins = new Set(members.map(m => m.login));
+  const byMember = new Map();
+  members.forEach(m => byMember.set(m.login, []));
+  const coClaimed = [];
+  const unclaimed = [];
+  const externalByLogin = new Map();
+
+  // Each PR goes to exactly one team-side section:
+  // - 0 claims → Unclaimed
+  // - 1 team-member claim → that member's individual section
+  // - 2+ team-member claims → Co-claimed (single dedicated section, no duplication)
+  // - only external claims → External (per claimer)
+  // External claimers in PRs that also have a team-member claimer don't get a
+  // section of their own — they're visible via the chips on the card.
+  for (const pr of teamPRs) {
+    const claims = pr.claims || [];
+    if (claims.length === 0) { unclaimed.push(pr); continue; }
+    const teamClaimers = claims.filter(c => memberLogins.has(c.login));
+    if (teamClaimers.length >= 2) {
+      coClaimed.push(pr);
+    } else if (teamClaimers.length === 1) {
+      byMember.get(teamClaimers[0].login).push(pr);
+    } else {
+      // No team-member claimers — surface each external claimer as its own bucket.
+      for (const c of claims) {
+        if (!externalByLogin.has(c.login)) externalByLogin.set(c.login, []);
+        externalByLogin.get(c.login).push(pr);
+      }
+    }
+  }
+
+  const username = localStorage.getItem(STORAGE_KEYS.user);
+  const activeMembers = members.filter(m => byMember.get(m.login).length > 0)
+    .sort((a, b) => byMember.get(b.login).length - byMember.get(a.login).length);
+  const idleMembers = members.filter(m => byMember.get(m.login).length === 0);
+
+  let html = '';
+
+  if (teamPRs.length === 0) {
+    container.innerHTML = `<div class="blankslate">
+      <h3>No pending reviews for ${escapeHtml(qualified)}</h3>
+      <p>Nothing to coordinate right now. Take a break.</p>
+    </div>`;
+    if (vcount) vcount.textContent = 0;
+    return;
+  }
+
+  const sectionHeader = (key, label) => {
+    const collapsed = isTeamCollapsed(key);
+    const arrowCls = collapsed ? 'collapse-arrow collapsed' : 'collapse-arrow';
+    return `<div class="team-section-title" onclick="toggleTeamCollapse('${escapeHtml(key)}')">
+      <span class="${arrowCls}">${octicon('chevron-down', 12)}</span>${escapeHtml(label)}
+    </div>`;
+  };
+
+  const memberHeader = (key, login, count, isMe, avatarUrl) => {
+    const collapsed = isTeamCollapsed(key);
+    const arrowCls = collapsed ? 'collapse-arrow collapsed' : 'collapse-arrow';
+    const avatar = avatarUrl
+      ? `<img class="member-avatar" src="${escapeHtml(avatarUrl)}" alt="">`
+      : '';
+    return `<div class="team-member-header" onclick="toggleTeamCollapse('${escapeHtml(key)}')">
+      <span class="${arrowCls}">${octicon('chevron-down', 12)}</span>
+      ${avatar}
+      <span class="member-login${isMe ? ' is-me' : ''}">@${escapeHtml(login)}${isMe ? ' (you)' : ''}</span>
+      <span class="member-count">${count} PR${count !== 1 ? 's' : ''}</span>
+    </div>`;
+  };
+
+  const githubAvatar = (login) => `https://github.com/${encodeURIComponent(login)}.png?size=48`;
+
+  if (activeMembers.length > 0) {
+    html += sectionHeader('section:reviewing', `Reviewing now · ${activeMembers.length}`);
+    if (!isTeamCollapsed('section:reviewing')) {
+      for (const m of activeMembers) {
+        const prs = byMember.get(m.login);
+        const isMe = m.login === username;
+        const memberKey = `member:${m.login}`;
+        const memberCollapsed = isTeamCollapsed(memberKey);
+        html += `<div class="team-member-section">
+          ${memberHeader(memberKey, m.login, prs.length, isMe, m.avatarUrl)}
+          ${memberCollapsed ? '' : `<ul class="pr-list">${prs.map(pr => renderPRCard(pr)).join('')}</ul>`}
+        </div>`;
+      }
+    }
+  }
+
+  if (coClaimed.length > 0) {
+    // Group co-claimed PRs by the sorted set of team-claimer logins so that
+    // pairs/triples who are pairing on review get their own visual subsection.
+    const coClaimedGroups = new Map(); // signature -> { logins: [], prs: [] }
+    for (const pr of coClaimed) {
+      const teamLogins = (pr.claims || [])
+        .filter(c => memberLogins.has(c.login))
+        .map(c => c.login)
+        .sort();
+      const signature = teamLogins.join(',');
+      if (!coClaimedGroups.has(signature)) {
+        coClaimedGroups.set(signature, { logins: teamLogins, prs: [] });
+      }
+      coClaimedGroups.get(signature).prs.push(pr);
+    }
+
+    html += sectionHeader('section:co-claimed', `Co-claimed · ${coClaimed.length}`);
+    if (!isTeamCollapsed('section:co-claimed')) {
+      const sortedGroups = [...coClaimedGroups.entries()]
+        .sort((a, b) => b[1].prs.length - a[1].prs.length);
+      for (const [signature, group] of sortedGroups) {
+        const key = `coclaim:${signature}`;
+        const collapsed = isTeamCollapsed(key);
+        const arrowCls = collapsed ? 'collapse-arrow collapsed' : 'collapse-arrow';
+        const badges = group.logins.map(login => {
+          const member = members.find(m => m.login === login);
+          const isMe = login === username;
+          const avatar = member?.avatarUrl
+            ? `<img class="co-claim-avatar" src="${escapeHtml(member.avatarUrl)}" alt="">`
+            : '';
+          return `<span class="co-claim-badge${isMe ? ' is-me' : ''}">${avatar}@${escapeHtml(login)}${isMe ? ' (you)' : ''}</span>`;
+        }).join('');
+        html += `<div class="team-member-section">
+          <div class="team-member-header" onclick="toggleTeamCollapse('${escapeHtml(key)}')">
+            <span class="${arrowCls}">${octicon('chevron-down', 12)}</span>
+            <span class="co-claim-badges">${badges}</span>
+            <span class="member-count">${group.prs.length} PR${group.prs.length !== 1 ? 's' : ''}</span>
+          </div>
+          ${collapsed ? '' : `<ul class="pr-list">${group.prs.map(pr => renderPRCard(pr)).join('')}</ul>`}
+        </div>`;
+      }
+    }
+  }
+
+  if (unclaimed.length > 0) {
+    html += sectionHeader('section:unclaimed', `Unclaimed · ${unclaimed.length}`);
+    if (!isTeamCollapsed('section:unclaimed')) {
+      html += `<ul class="pr-list">${unclaimed.map(pr => renderPRCard(pr)).join('')}</ul>`;
+    }
+  }
+
+  if (externalByLogin.size > 0) {
+    html += sectionHeader('section:external', `Claimed by people outside the team · ${externalByLogin.size}`);
+    if (!isTeamCollapsed('section:external')) {
+      for (const [login, prs] of externalByLogin) {
+        const isMe = login === username;
+        const extKey = `external:${login}`;
+        const extCollapsed = isTeamCollapsed(extKey);
+        html += `<div class="team-member-section">
+          ${memberHeader(extKey, login, prs.length, isMe, githubAvatar(login))}
+          ${extCollapsed ? '' : `<ul class="pr-list">${prs.map(pr => renderPRCard(pr)).join('')}</ul>`}
+        </div>`;
+      }
+    }
+  }
+
+  if (idleMembers.length > 0) {
+    html += sectionHeader('section:idle', `Idle · ${idleMembers.length}`);
+    if (!isTeamCollapsed('section:idle')) {
+      html += `<div class="team-member-section">`;
+      for (const m of idleMembers) {
+        const isMe = m.login === username;
+        const avatar = m.avatarUrl ? `<img class="member-avatar" src="${escapeHtml(m.avatarUrl)}" alt="">` : '';
+        html += `<div class="team-member-header idle">
+          ${avatar}
+          <span class="member-login${isMe ? ' is-me' : ''}">@${escapeHtml(m.login)}${isMe ? ' (you)' : ''}</span>
+          <span class="member-count">0</span>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+  }
+
+  container.innerHTML = html;
+  if (vcount) vcount.textContent = teamPRs.length;
+}
+
+function onTeamSelectorChange(qualified) {
+  localStorage.setItem(STORAGE_KEYS.selectedTeam, qualified);
+  renderTeamView();
+}
+
+function renderClaimChip(c, currentUser) {
+  const isMe = c.login === currentUser;
+  const cls = ['claim-chip'];
+  if (c.viaAssignee) cls.push('claim-assigned');
+  if (isMe) cls.push('claim-me');
+  const icons = [];
+  if (c.viaReaction) icons.push('👀');
+  if (c.viaAssignee) icons.push('📌');
+  const title = [];
+  if (c.viaReaction) title.push('eyes reaction');
+  if (c.viaAssignee) title.push('assigned');
+  return `<span class="${cls.join(' ')}" title="${title.join(' + ')}"><span class="claim-icons">${icons.join('')}</span>${escapeHtml(c.login)}${isMe ? ' (you)' : ''}</span>`;
+}
+
+function renderClaimRow(pr, currentUser, opts = {}) {
+  const claims = pr.claims || [];
+  const myClaim = claims.find(c => c.login === currentUser) || null;
+  const chips = claims.map(c => renderClaimChip(c, currentUser)).join('');
+  // On your own PRs you can't review your own PR, so no claim button.
+  if (opts.showButton === false) {
+    if (!chips) return '';
+    return `<div class="pr-claims"><span class="pr-claims-label">Claimed by:</span>${chips}</div>`;
+  }
+  const claimedClass = myClaim ? ' claimed' : '';
+  const btnLabel = myClaim ? 'Release' : 'Claim';
+  const btnIcon = myClaim ? '✕' : '👀';
+  const btnTitle = myClaim
+    ? `Release: removes your 👀 reaction${myClaim.viaAssignee ? ' and unassigns you' : ''}`
+    : 'Claim with a 👀 reaction (signals you are reviewing)';
+  const escapedPrId = escapeHtml(pr.id || '');
+  const btn = `<button class="claim-btn${claimedClass}" data-pr-id="${escapedPrId}" onclick="toggleClaim(this, '${escapedPrId}')" title="${btnTitle}">${btnIcon} ${btnLabel}</button>`;
+  const promoteBtn = myClaim && !myClaim.viaAssignee
+    ? `<button class="claim-btn claim-btn-secondary" data-pr-id="${escapedPrId}" onclick="promoteClaim(this, '${escapedPrId}')" title="Promote to assignee (stronger commitment, visible in GitHub UI)">📌 Assign me</button>`
+    : (myClaim && myClaim.viaAssignee
+      ? `<button class="claim-btn claim-btn-secondary claimed" data-pr-id="${escapedPrId}" onclick="demoteClaim(this, '${escapedPrId}')" title="Unassign (keeps your 👀 reaction)">📌 Unassign</button>`
+      : '');
+  return `<div class="pr-claims"><span class="pr-claims-label">Claim:</span>${chips}${btn}${promoteBtn}</div>`;
+}
+
 function renderReviewerChip(r) {
   const isRequiredPending = r.state === 'PENDING' && r.required;
   const isMyTeam = r.required && userTeams.some(t => t.qualified === r.login);
@@ -2791,8 +3562,11 @@ function switchView(view) {
   localStorage.setItem(STORAGE_KEYS.view, view);
   document.getElementById('review-view').style.display = view === 'review' ? '' : 'none';
   document.getElementById('my-prs-view').style.display = view === 'my-prs' ? '' : 'none';
+  document.getElementById('team-view').style.display = view === 'team' ? '' : 'none';
   document.getElementById('view-tab-review').classList.toggle('active', view === 'review');
   document.getElementById('view-tab-my-prs').classList.toggle('active', view === 'my-prs');
+  document.getElementById('view-tab-team').classList.toggle('active', view === 'team');
+  if (view === 'team') renderTeamView();
 }
 
 function renderMyPRCard(pr) {
@@ -2834,6 +3608,7 @@ function renderMyPRCard(pr) {
         </div>
         ${attentionHtml}
         ${reviewerBadges ? `<div class="pr-reviewers" style="margin-top:6px;"><span class="pr-reviewers-label">Reviews:</span>${reviewerBadges}</div>` : ''}
+        ${renderClaimRow(pr, localStorage.getItem(STORAGE_KEYS.user), { showButton: false })}
         ${labels ? `<div class="pr-labels">${labels}</div>` : ''}
       </div>
       <div class="pr-right">
@@ -2848,6 +3623,7 @@ function onShowDraftsChange() {
   updateCounts();
   renderPRs();
   renderMyPRs();
+  if (currentView === 'team') renderTeamView();
 }
 
 function renderMyPRs() {
