@@ -1257,6 +1257,8 @@
   }
 
   .pr-review-decision.rd-approved { background: var(--badge-green-bg); color: var(--green); opacity: 0.75; }
+  .pr-review-decision.rd-approved-commented { background: var(--badge-green-bg); color: var(--green); }
+  .pr-review-decision.rd-commented { background: var(--badge-muted-bg); color: var(--text-muted); }
   .pr-review-decision.rd-changes { background: var(--badge-red-bg); color: var(--red); }
   .pr-review-decision.rd-required { background: var(--badge-muted-bg); color: var(--text-muted); }
 
@@ -1483,6 +1485,10 @@
         Review requests
         <span class="view-tab-count" id="vcount-review">0</span>
       </button>
+      <button class="view-tab" id="view-tab-my-reviews" onclick="switchView('my-reviews')">
+        My reviews
+        <span class="view-tab-count" id="vcount-my-reviews">0</span>
+      </button>
       <button class="view-tab" id="view-tab-my-prs" onclick="switchView('my-prs')">
         My PRs
         <span class="view-tab-count" id="vcount-my-prs">0</span>
@@ -1523,6 +1529,19 @@
       </div>
     </div>
 
+    <div id="my-reviews-view" style="display:none;">
+      <div class="toolbar">
+        <div class="filter-tabs" id="my-reviews-filter-tabs">
+          <button class="filter-tab active" data-mr-filter="all">All <span class="count" id="count-mr-all">0</span></button>
+          <button class="filter-tab" data-mr-filter="APPROVED">Approved <span class="count" id="count-mr-approved">0</span></button>
+          <button class="filter-tab" data-mr-filter="APPROVED_COMMENTED">Approved+commented <span class="count" id="count-mr-approved-commented">0</span></button>
+          <button class="filter-tab" data-mr-filter="COMMENTED">Commented <span class="count" id="count-mr-commented">0</span></button>
+          <button class="filter-tab" data-mr-filter="CHANGES_REQUESTED">Changes requested <span class="count" id="count-mr-changes">0</span></button>
+        </div>
+      </div>
+      <div id="my-reviews-container"></div>
+    </div>
+
     <div id="my-prs-view" style="display:none;">
       <div id="my-pr-container"></div>
     </div>
@@ -1560,7 +1579,7 @@
 </footer>
 
 <script>
-const STORAGE_KEYS = { token: 'prd_token', user: 'prd_user', viewerId: 'prd_viewer_id', teams: 'prd_teams', theme: 'prd_theme', dismissed: 'prd_dismissed', collapsedRepos: 'prd_collapsed_repos', collapsedMyRepos: 'prd_collapsed_my_repos', mutedTeams: 'prd_muted_teams', botLogins: 'prd_bot_logins', showDrafts: 'prd_show_drafts', view: 'prd_view', teamsBarCollapsed: 'prd_teams_bar_collapsed', excludedTeams: 'prd_excluded_teams', selectedTeam: 'prd_selected_team', claimFilter: 'prd_claim_filter', teamCollapsed: 'prd_team_collapsed' };
+const STORAGE_KEYS = { token: 'prd_token', user: 'prd_user', viewerId: 'prd_viewer_id', teams: 'prd_teams', theme: 'prd_theme', dismissed: 'prd_dismissed', collapsedRepos: 'prd_collapsed_repos', collapsedMyRepos: 'prd_collapsed_my_repos', collapsedMyReviewsRepos: 'prd_collapsed_my_reviews_repos', mutedTeams: 'prd_muted_teams', botLogins: 'prd_bot_logins', showDrafts: 'prd_show_drafts', view: 'prd_view', teamsBarCollapsed: 'prd_teams_bar_collapsed', excludedTeams: 'prd_excluded_teams', selectedTeam: 'prd_selected_team', claimFilter: 'prd_claim_filter', teamCollapsed: 'prd_team_collapsed', myReviewsFilter: 'prd_my_reviews_filter' };
 const DEFAULT_BOT_LOGINS = ['elasticmachine', 'macroscopeapp'];
 let allPRs = [];
 let currentFilter = 'all';
@@ -1568,6 +1587,8 @@ let currentClaimFilter = 'all'; // 'all' | 'unclaimed' | 'claimed'
 let currentRequestedViaFilter = null; // null = all, 'direct' = only direct, 'org/team-slug' = specific team
 let dismissedShowExpanded = false;
 let myOwnPRs = [];
+let myReviewsPRs = [];
+let currentMyReviewsFilter = 'all';
 let currentView = 'review';
 let teamMembersCache = new Map(); // qualified team -> [{ login, avatarUrl }]
 
@@ -1819,6 +1840,7 @@ function showDashboard() {
   paintViewTabIcons();
   loadUserProfile();
   setupFilterTabs();
+  setupMyReviewsFilterTabs();
   setupDraftToggle();
   const savedView = localStorage.getItem(STORAGE_KEYS.view) || 'review';
   switchView(savedView);
@@ -1869,14 +1891,16 @@ function renderHero(stats) {
 
   const total = stats?.totalReviews ?? 0;
   const attention = stats?.myPrsAttention ?? 0;
+  const reviewsAttention = stats?.myReviewsAttention ?? 0;
 
   let html;
-  if (total === 0 && attention === 0) {
+  if (total === 0 && attention === 0 && reviewsAttention === 0) {
     html = '<span>All quiet on the review front, <strong>@' + escapeHtml(localStorage.getItem(STORAGE_KEYS.user) || 'friend') + '</strong>.</span>';
   } else {
     const parts = [];
     if (total > 0) parts.push(`<strong>${total}</strong> review${total === 1 ? '' : 's'} await`);
     if (attention > 0) parts.push(`<span class="alert">${attention}</span> of your PR${attention === 1 ? '' : 's'} need${attention === 1 ? 's' : ''} attention`);
+    if (reviewsAttention > 0) parts.push(`<span class="alert">${reviewsAttention}</span> PR${reviewsAttention === 1 ? '' : 's'} you reviewed had follow-up`);
     html = parts.join(' &middot; ');
   }
   text.innerHTML = html;
@@ -2574,6 +2598,7 @@ function rerenderForCurrentView() {
   updateCounts();
   renderPRs();
   renderMyPRs();
+  renderMyReviews();
   if (currentView === 'team') renderTeamView();
 }
 
@@ -2768,6 +2793,156 @@ async function fetchMyPRs() {
   });
 }
 
+async function fetchMyReviews() {
+  const username = localStorage.getItem(STORAGE_KEYS.user);
+  const query = `is:pr is:open reviewed-by:${username} -author:${username}`;
+  let prs;
+  try {
+    prs = await searchMyPRs(query);
+  } catch (e) {
+    console.warn('fetchMyReviews failed:', e.message);
+    return; // keep existing data
+  }
+
+  myReviewsPRs = prs.map(pr => {
+    const reviews = pr.reviews?.nodes || [];
+    const comments = pr.comments?.nodes || [];
+
+    // ---- Compute my own review state (with APPROVED_COMMENTED promotion) ----
+    const myReviews = [...reviews]
+      .filter(r => r.author?.login === username)
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    const myComments = comments.filter(c => c.author?.login === username);
+
+    const lastDecisive = [...myReviews].reverse().find(r =>
+      r.state === 'APPROVED' || r.state === 'CHANGES_REQUESTED'
+    );
+
+    let myReviewState;
+    let myReviewAt = null;
+    if (!lastDecisive) {
+      myReviewState = 'COMMENTED';
+      myReviewAt = myReviews.at(-1)?.createdAt || null;
+    } else if (lastDecisive.state === 'CHANGES_REQUESTED') {
+      myReviewState = 'CHANGES_REQUESTED';
+      myReviewAt = lastDecisive.createdAt;
+    } else {
+      // Last decisive is APPROVED — check for follow-up activity
+      const approvedAt = lastDecisive.createdAt;
+      const commentedAfter = myComments.some(c => c.createdAt > approvedAt);
+      const reviewCommentedAfter = myReviews.some(r =>
+        r.createdAt > approvedAt && r.state === 'COMMENTED'
+      );
+      const approvedWithInlineComments = (lastDecisive.comments?.totalCount || 0) > 0;
+      myReviewState = (commentedAfter || reviewCommentedAfter || approvedWithInlineComments)
+        ? 'APPROVED_COMMENTED'
+        : 'APPROVED';
+      myReviewAt = lastDecisive.createdAt;
+    }
+
+    // ---- Last human activity (excluding bots) for needs-attention ----
+    const humanReviews = [...reviews]
+      .filter(r => isHumanActor(r.author))
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    const humanComments = comments.filter(c => isHumanActor(c.author));
+    const lastHumanReview = humanReviews.at(-1) || null;
+    const lastHumanComment = humanComments.at(-1) || null;
+    let lastActivityLogin = null;
+    let lastActivityAt = null;
+    if (lastHumanReview && lastHumanComment) {
+      const reviewNewer = new Date(lastHumanReview.createdAt) >= new Date(lastHumanComment.createdAt);
+      lastActivityLogin = reviewNewer ? lastHumanReview.author?.login : lastHumanComment.author?.login;
+      lastActivityAt = reviewNewer ? lastHumanReview.createdAt : lastHumanComment.createdAt;
+    } else if (lastHumanReview) {
+      lastActivityLogin = lastHumanReview.author?.login;
+      lastActivityAt = lastHumanReview.createdAt;
+    } else if (lastHumanComment) {
+      lastActivityLogin = lastHumanComment.author?.login;
+      lastActivityAt = lastHumanComment.createdAt;
+    }
+    const myLastActivityMs = Math.max(
+      myReviews.at(-1)?.createdAt ? new Date(myReviews.at(-1).createdAt).getTime() : 0,
+      myComments.at(-1)?.createdAt ? new Date(myComments.at(-1).createdAt).getTime() : 0
+    );
+    const needsAttention = !!(lastActivityLogin && lastActivityLogin !== username &&
+      lastActivityAt && new Date(lastActivityAt).getTime() > myLastActivityMs);
+
+    // ---- Other reviewers (excluding author and the user themselves) ----
+    const reviewerStates = new Map();
+    const reviewerLastDecisive = new Map();
+    const reviewerLastDecisiveAt = new Map();
+    const reviewerApprovedWithComments = new Set();
+    for (const r of reviews) {
+      const login = r.author?.login;
+      if (!login || login === pr.author?.login || login === username) continue;
+      if (r.state === 'APPROVED' || r.state === 'CHANGES_REQUESTED') {
+        reviewerLastDecisive.set(login, r.state);
+        reviewerLastDecisiveAt.set(login, r.createdAt);
+      }
+      if (r.state === 'APPROVED' && (r.comments?.totalCount || 0) > 0) {
+        reviewerApprovedWithComments.add(login);
+      }
+      reviewerStates.set(login, r.state);
+    }
+    for (const c of comments) {
+      const login = c.author?.login;
+      if (!login || login === pr.author?.login || login === username || !isHumanActor(c.author)) continue;
+      if (!reviewerStates.has(login)) {
+        reviewerStates.set(login, 'COMMENTED');
+      } else if (reviewerLastDecisive.get(login) === 'APPROVED' &&
+                 c.createdAt > (reviewerLastDecisiveAt.get(login) || '')) {
+        reviewerStates.set(login, 'APPROVED_COMMENTED');
+      }
+    }
+    for (const [login, state] of reviewerStates) {
+      if (state === 'APPROVED' && reviewerApprovedWithComments.has(login)) {
+        reviewerStates.set(login, 'APPROVED_COMMENTED');
+      } else if (state === 'COMMENTED' && reviewerLastDecisive.get(login) === 'APPROVED') {
+        reviewerStates.set(login, 'APPROVED_COMMENTED');
+      }
+    }
+    for (const rr of (pr.reviewRequests?.nodes || [])) {
+      const login = rr.requestedReviewer?.login;
+      if (login && login !== pr.author?.login && login !== username && !reviewerStates.has(login)) {
+        reviewerStates.set(login, 'PENDING');
+      }
+    }
+    const otherReviewers = Array.from(reviewerStates.entries())
+      .map(([login, state]) => ({ login, state }))
+      .sort((a, b) => {
+        const order = { APPROVED: 0, APPROVED_COMMENTED: 1, CHANGES_REQUESTED: 2, COMMENTED: 3, PENDING: 4, DISMISSED: 5 };
+        return (order[a.state] ?? 9) - (order[b.state] ?? 9);
+      });
+
+    // ---- CI rollup ----
+    const ciRaw = pr.commits?.nodes?.[0]?.commit?.statusCheckRollup?.state;
+    const ciState = ciRaw === 'SUCCESS' ? 'success'
+      : (ciRaw === 'FAILURE' || ciRaw === 'ERROR') ? 'failure'
+      : (ciRaw === 'PENDING' || ciRaw === 'EXPECTED' || ciRaw === 'STALE') ? 'pending'
+      : null;
+
+    return {
+      ...pr,
+      repo: pr.repository?.nameWithOwner || 'unknown',
+      myReviewState,
+      myReviewAt,
+      needsAttention,
+      lastActivityLogin,
+      lastActivityAt,
+      otherReviewers,
+      ciState,
+      reviewDecision: pr.reviewDecision || null,
+      claims: deriveClaims(pr),
+    };
+  }).filter(pr => !pr.repository?.isArchived);
+
+  // PRs needing attention first, then most-recently-updated.
+  myReviewsPRs.sort((a, b) => {
+    if (a.needsAttention !== b.needsAttention) return a.needsAttention ? -1 : 1;
+    return new Date(b.updatedAt) - new Date(a.updatedAt);
+  });
+}
+
 function setLoadingState(message, detail) {
   const container = document.getElementById('pr-container');
   container.innerHTML = `<div class="loading">
@@ -2811,7 +2986,7 @@ async function fetchPRs() {
 
     setLoadingState('Loading pull requests...', `Running ${queries.length} search${queries.length > 1 ? 'es' : ''}...`);
 
-    // Run review searches and "My PRs" searches in parallel
+    // Run review searches and personal-tracking searches in parallel
     const [results] = await Promise.all([
       Promise.all(
         queries.map(q => searchPRs(q.query).catch(err => {
@@ -2819,7 +2994,8 @@ async function fetchPRs() {
           return null; // null = failed, [] = genuinely empty
         }))
       ),
-      fetchMyPRs().catch(err => console.warn('My PRs fetch failed:', err))
+      fetchMyPRs().catch(err => console.warn('My PRs fetch failed:', err)),
+      fetchMyReviews().catch(err => console.warn('My reviews fetch failed:', err))
     ]);
 
     // If every review search errored out, preserve existing data.
@@ -2986,11 +3162,13 @@ async function fetchPRs() {
     updateCounts();
     renderPRs();
     renderMyPRs();
+    renderMyReviews();
     if (currentView === 'team') renderTeamView();
     document.getElementById('status-text').textContent = `Updated ${new Date().toLocaleTimeString()}`;
     renderHero({
       totalReviews: getViaFilteredPRs().active.length,
       myPrsAttention: myOwnPRs.filter(pr => pr.needsAttention).length,
+      myReviewsAttention: myReviewsPRs.filter(pr => pr.needsAttention).length,
     });
 
   } catch (e) {
@@ -3561,9 +3739,11 @@ function switchView(view) {
   currentView = view;
   localStorage.setItem(STORAGE_KEYS.view, view);
   document.getElementById('review-view').style.display = view === 'review' ? '' : 'none';
+  document.getElementById('my-reviews-view').style.display = view === 'my-reviews' ? '' : 'none';
   document.getElementById('my-prs-view').style.display = view === 'my-prs' ? '' : 'none';
   document.getElementById('team-view').style.display = view === 'team' ? '' : 'none';
   document.getElementById('view-tab-review').classList.toggle('active', view === 'review');
+  document.getElementById('view-tab-my-reviews').classList.toggle('active', view === 'my-reviews');
   document.getElementById('view-tab-my-prs').classList.toggle('active', view === 'my-prs');
   document.getElementById('view-tab-team').classList.toggle('active', view === 'team');
   if (view === 'team') renderTeamView();
@@ -3623,6 +3803,7 @@ function onShowDraftsChange() {
   updateCounts();
   renderPRs();
   renderMyPRs();
+  renderMyReviews();
   if (currentView === 'team') renderTeamView();
 }
 
@@ -3665,6 +3846,150 @@ function renderMyPRs() {
     </li>`;
     if (!isCollapsed) {
       html += repoPrs.map(pr => renderMyPRCard(pr)).join('');
+    }
+  }
+  html += '</ul>';
+  container.innerHTML = html;
+}
+
+function getCollapsedMyReviewsRepos() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.collapsedMyReviewsRepos) || '[]'); }
+  catch { return []; }
+}
+
+function toggleMyReviewsRepoCollapse(repo) {
+  const collapsed = getCollapsedMyReviewsRepos();
+  const idx = collapsed.indexOf(repo);
+  if (idx >= 0) collapsed.splice(idx, 1); else collapsed.push(repo);
+  localStorage.setItem(STORAGE_KEYS.collapsedMyReviewsRepos, JSON.stringify(collapsed));
+  renderMyReviews();
+}
+
+function setupMyReviewsFilterTabs() {
+  const tabs = document.getElementById('my-reviews-filter-tabs');
+  if (!tabs) return;
+  const saved = localStorage.getItem(STORAGE_KEYS.myReviewsFilter);
+  if (saved) {
+    currentMyReviewsFilter = saved;
+    tabs.querySelectorAll('.filter-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.mrFilter === saved));
+  }
+  tabs.addEventListener('click', (e) => {
+    const tab = e.target.closest('.filter-tab');
+    if (!tab) return;
+    tabs.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMyReviewsFilter = tab.dataset.mrFilter;
+    localStorage.setItem(STORAGE_KEYS.myReviewsFilter, currentMyReviewsFilter);
+    renderMyReviews();
+  });
+}
+
+function renderMyReviewsCard(pr) {
+  const draft = pr.isDraft ? '<span style="color:var(--text-dim);">[Draft]</span> ' : '';
+
+  const attentionHtml = pr.needsAttention
+    ? `<div class="pr-attention">${octicon('bell', 12)} @${escapeHtml(pr.lastActivityLogin)} responded${pr.lastActivityAt ? ` · ${timeAgo(pr.lastActivityAt)}` : ''}</div>`
+    : '';
+
+  const reviewerBadges = (pr.otherReviewers || []).map(r => renderReviewerChip(r)).join('');
+  const labels = (pr.labels?.nodes || []).map(l => `<span class="pr-label">${escapeHtml(l.name)}</span>`).join('');
+
+  const myReviewHtml = (() => {
+    const cfg = {
+      APPROVED: { cls: 'rd-approved', icon: octicon('check', 12), label: 'Approved' },
+      APPROVED_COMMENTED: { cls: 'rd-approved-commented', icon: octicon('comment', 12), label: 'Approved + commented' },
+      COMMENTED: { cls: 'rd-commented', icon: octicon('comment', 12), label: 'Commented' },
+      CHANGES_REQUESTED: { cls: 'rd-changes', icon: octicon('diff', 12), label: 'Changes requested' },
+    }[pr.myReviewState];
+    if (!cfg) return '';
+    const ago = pr.myReviewAt ? ` <span style="text-transform:none;font-weight:400;">· ${timeAgo(pr.myReviewAt)}</span>` : '';
+    return `<span class="pr-review-decision ${cfg.cls}" title="Your review">${cfg.icon} ${cfg.label}${ago}</span>`;
+  })();
+
+  const ciHtml = renderCiBadge(pr.ciState);
+  const attentionClass = pr.needsAttention ? ' needs-attention' : '';
+
+  return `
+    <li class="pr-card${attentionClass}">
+      <div class="pr-body">
+        <div class="pr-title-row">
+          <span class="pr-number">#${pr.number}</span><a class="pr-title" href="${pr.url}" target="_blank" rel="noopener">${draft}${escapeHtml(pr.title)}</a><button class="pr-copy-btn" title="Copy PR link" aria-label="Copy PR link" onclick="copyPRUrl(this, '${pr.url}')">${octicon('copy', 13)}</button>
+        </div>
+        <div class="pr-meta">
+          <span>${escapeHtml(pr.repo)}</span>
+          <span>by <a href="https://github.com/${pr.author?.login}" target="_blank">@${escapeHtml(pr.author?.login || '?')}</a></span>
+          <span>opened ${timeAgo(pr.createdAt)}</span>
+          ${renderCiInline(pr.ciState)}
+        </div>
+        ${attentionHtml}
+        ${reviewerBadges ? `<div class="pr-reviewers" style="margin-top:6px;"><span class="pr-reviewers-label">Reviews:</span>${reviewerBadges}</div>` : ''}
+        ${renderClaimRow(pr, localStorage.getItem(STORAGE_KEYS.user))}
+        ${labels ? `<div class="pr-labels">${labels}</div>` : ''}
+      </div>
+      <div class="pr-right">
+        ${myReviewHtml}
+        ${ciHtml}
+        <div class="pr-updated">updated ${timeAgo(pr.updatedAt)}</div>
+      </div>
+    </li>`;
+}
+
+function renderMyReviews() {
+  const container = document.getElementById('my-reviews-container');
+  const countEl = document.getElementById('vcount-my-reviews');
+  if (!container || !countEl) return;
+
+  const showDrafts = document.getElementById('show-drafts')?.checked ?? true;
+  const baseVisible = showDrafts ? myReviewsPRs : myReviewsPRs.filter(pr => !pr.isDraft);
+
+  // Counts for filter chips reflect the unfiltered (state-wise) but draft-aware set.
+  const counts = { all: baseVisible.length, APPROVED: 0, APPROVED_COMMENTED: 0, COMMENTED: 0, CHANGES_REQUESTED: 0 };
+  baseVisible.forEach(pr => {
+    if (counts[pr.myReviewState] !== undefined) counts[pr.myReviewState]++;
+  });
+  const setCount = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n; };
+  setCount('count-mr-all', counts.all);
+  setCount('count-mr-approved', counts.APPROVED);
+  setCount('count-mr-approved-commented', counts.APPROVED_COMMENTED);
+  setCount('count-mr-commented', counts.COMMENTED);
+  setCount('count-mr-changes', counts.CHANGES_REQUESTED);
+
+  const visible = currentMyReviewsFilter === 'all'
+    ? baseVisible
+    : baseVisible.filter(pr => pr.myReviewState === currentMyReviewsFilter);
+
+  const attentionCount = visible.filter(pr => pr.needsAttention).length;
+  countEl.textContent = visible.length;
+  countEl.className = `view-tab-count${attentionCount > 0 ? ' has-attention' : ''}`;
+
+  if (visible.length === 0) {
+    container.innerHTML = `<div class="blankslate">
+      <div class="blankslate-octicon">${octicon('check', 32)}</div>
+      <h3>${myReviewsPRs.length === 0 ? 'No reviews to track' : 'No PRs match this filter'}</h3>
+      <p>${myReviewsPRs.length === 0 ? 'You have not reviewed any open PR yet.' : 'Try "All" to see everything you have reviewed.'}</p>
+    </div>`;
+    return;
+  }
+
+  const grouped = new Map();
+  for (const pr of visible) {
+    if (!grouped.has(pr.repo)) grouped.set(pr.repo, []);
+    grouped.get(pr.repo).push(pr);
+  }
+
+  const collapsed = getCollapsedMyReviewsRepos();
+  let html = '<ul class="pr-list">';
+  for (const [repo, repoPrs] of grouped) {
+    const isCollapsed = collapsed.includes(repo);
+    const arrowClass = isCollapsed ? 'collapse-arrow collapsed' : 'collapse-arrow';
+    html += `<li class="repo-group-header" onclick="toggleMyReviewsRepoCollapse('${escapeHtml(repo)}')">
+      <span class="${arrowClass}">${octicon('chevron-down', 12)}</span>
+      <a href="https://github.com/${repo}" target="_blank" onclick="event.stopPropagation()">${escapeHtml(repo)}</a>
+      <span class="repo-count">${repoPrs.length}</span>
+    </li>`;
+    if (!isCollapsed) {
+      html += repoPrs.map(pr => renderMyReviewsCard(pr)).join('');
     }
   }
   html += '</ul>';
